@@ -1,0 +1,22 @@
+category,vendor,share_of_category_buyers_pct,yoy_change_pts,share_of_category_spend_pct
+Foundational LLMs,Anthropic,80.5,39.4,55.7
+Foundational LLMs,OpenAI,77.4,-17.6,41.0
+Foundational LLMs,xAI,13.0,5.2,0.8
+Foundational LLMs,Mistral AI,0.4,0.1,2.6
+Foundational LLMs,Cohere,0.3,-0.1,0.1
+Coding Agents,Claude Code,87.3,51.3,37.1
+Coding Agents,OpenAI Codex,42.5,-2.6,57.8
+Coding Agents,Cursor,33.6,-34.2,4.7
+Coding Agents,CodeRabbit,5.0,-0.9,0.2
+Coding Agents,Windsurf,3.0,-9.1,0.1
+Coding Agents,Magic Patterns,0.5,-0.7,0.0
+Project Management,Atlassian,46.6,-6.0,44.1
+Project Management,Notion,31.9,0.7,15.3
+Project Management,Asana,21.5,0.5,10.0
+Project Management,monday.com,18.7,-0.1,10.1
+Project Management,Airtable,15.6,-0.1,5.2
+Project Management,Linear,15.3,3.5,7.1
+Communication,Zoom,70.6,-3.1,20.5
+Communication,Slack,55.8,0.0,77.6
+Communication,Microsoft Teams,11.5,1.0,1.5
+Communication,Discord,2.8,-0.4,0.3

@@ -1,0 +1,401 @@
+<meta name="dash-one-writer">
+<style>
+.sw { display: flex; flex-direction: column; gap: var(--cds-gap-xl); }
+.sw h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+.sw h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.sw .lede { font-size: var(--cds-font-size-body); color: var(--color-fg); margin: var(--cds-gap-sm) 0 0; max-width: 46rem; line-height: 1.5; }
+.sw .sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0 0 var(--cds-gap-sm); max-width: 46rem; }
+.sw .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--cds-gap-md); }
+.sw .tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+.sw .tile .lab { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.sw .tile .big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 2.2rem; font-variant-numeric: tabular-nums; margin: var(--cds-gap-xs) 0; }
+.sw .tile .chg { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.sw .good { color: var(--color-ok); }
+.sw .bad { color: var(--color-bad); }
+.sw .chart { position: relative; min-height: 260px; }
+.sw .chart svg text { font-size: 12px; fill: var(--cds-text-secondary); }
+.sw .chart svg text.strong { fill: var(--color-fg); }
+.sw .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--cds-radius); padding: 6px 8px; font-size: var(--cds-font-size-caption); color: var(--color-fg); white-space: nowrap; z-index: 5; }
+.sw .legend { display: flex; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-xs); flex-wrap: wrap; }
+.sw .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.sw .lg-ai { background: var(--cds-chart-categorical-1, #3b6fd6); }
+.sw .lg-est { background: var(--cds-chart-muted); }
+.sw .row { display: flex; gap: var(--cds-gap-sm); align-items: center; flex-wrap: wrap; margin-bottom: var(--cds-gap-sm); }
+.sw details { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.sw details li { margin: 4px 0; }
+</style>
+
+<div class="sw">
+  <header id="top">
+    <h1>Is AI eating the software budget?</h1>
+    <p class="lede">Over the last year, <b data-draw="ai-grow" data-source="split" data-field="growing" data-where="group=AI tools">—</b> of <b data-draw="ai-total" data-source="split" data-field="total" data-where="group=AI tools">—</b> AI tool categories gained business customers, while <b data-draw="est-shrink" data-source="split" data-field="shrinking" data-where="group=Established software">—</b> of <b data-draw="est-total" data-source="split" data-field="total" data-where="group=Established software">—</b> established software categories lost them.</p>
+    <p class="sub">Ramp spending data on 50,000+ US businesses. Built by Pooja Shah.</p>
+  </header>
+
+  <section class="tiles" id="kpis">
+    <div class="tile" id="kpi-ai">
+      <div class="lab">Businesses paying for any AI tool, latest month</div>
+      <div class="big" data-draw="kpi-share" data-source="kpi" data-field="latest_share" data-row="0">—</div>
+      <div class="chg" data-draw="kpi-change" data-source="kpi" data-field="change_12m" data-row="0">—</div>
+    </div>
+    <div class="tile" id="kpi-ai-cat">
+      <div class="lab">Average change in AI tool categories, past year</div>
+      <div class="big" data-draw="avg-ai" data-source="split" data-field="avg_yoy" data-where="group=AI tools">—</div>
+      <div class="chg">percentage points of businesses</div>
+    </div>
+    <div class="tile" id="kpi-est-cat">
+      <div class="lab">Average change in established software categories, past year</div>
+      <div class="big" data-draw="avg-est" data-source="split" data-field="avg_yoy" data-where="group=Established software">—</div>
+      <div class="chg">percentage points of businesses</div>
+    </div>
+  </section>
+
+  <section id="categories">
+    <h2>AI categories are growing; most established ones are shrinking</h2>
+    <p class="sub">Change over the past year in the share of businesses paying for each software category (percentage points). Hover a bar for its current share.</p>
+    <div class="legend"><span><i class="lg-ai"></i>AI tools</span><span><i class="lg-est"></i>Established software</span></div>
+    <div class="chart" data-draw="cat-chart" data-source="categories" role="img" aria-label="Bar chart of the past year's change in adoption for each software category"></div>
+  </section>
+
+  <section id="sectors">
+    <h2>Every sector added AI, and the late adopters gained the most</h2>
+    <p class="sub">Share of businesses paying for AI, 12 months ago (grey) vs the latest month (blue).</p>
+    <div class="chart" data-draw="sector-chart" data-source="sector_change" role="img" aria-label="Dot plot of AI adoption by sector, 12 months ago and latest month"></div>
+  </section>
+
+  <section id="sizes">
+    <h2>Larger businesses still lead, but all sizes are climbing</h2>
+    <p class="sub">Share of businesses paying for AI by company size, last 24 months.</p>
+    <div class="chart" data-draw="size-chart" data-source="size" role="img" aria-label="Line chart of AI adoption by company size over 24 months"></div>
+  </section>
+
+  <section id="vendors">
+    <h2>Who wins inside each category</h2>
+    <p class="sub">Share of the category's paying businesses that use each vendor, with the past year's change. Pick a category.</p>
+    <div class="row">
+      <select class="dash-select" data-draw="vendor-cat" aria-label="Software category" data-source="vendors"></select>
+    </div>
+    <div class="chart" data-draw="vendor-chart" data-source="vendors" role="img" aria-label="Bar chart of vendor adoption within the chosen category"></div>
+  </section>
+
+  <details id="notes">
+    <summary>How to read these numbers</summary>
+    <ul>
+      <li>All figures are from Ramp Data: card and bill-pay spending by US businesses on Ramp. Free tiers and tools paid for another way are not counted.</li>
+      <li>"AI tool" adoption (tiles, sectors, sizes) comes from Ramp's AI Index. Category figures come from Ramp Rate, which measures each category separately, so the two are not directly comparable.</li>
+      <li>Vendor shares overlap: one business can pay several vendors in the same category.</li>
+      <li>Which categories count as "AI tools" is this dashboard's own grouping.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(function () {
+  const pct = (v, d = 1) => (v == null || isNaN(v)) ? '—' : `${(+v).toFixed(d)}%`;
+  const pts = (v) => (v == null || isNaN(v)) ? '—' : `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)} pts`;
+  const mfmt = (m) => d3.utcFormat('%b %Y')(new Date(m + '-01T00:00:00Z'));
+  window.swFmt = { pct, pts, mfmt };
+
+  window.swTip = function (box) {
+    let t = box.querySelector(':scope > .tip');
+    if (!t) { t = document.createElement('div'); t.className = 'tip'; t.hidden = true; box.appendChild(t); }
+    return {
+      show(ev, html) {
+        t.replaceChildren(...html.map((s, i) => { const d = document.createElement('div'); d.textContent = s; if (i === 0) d.style.fontWeight = '600'; return d; }));
+        t.hidden = false;
+        const r = box.getBoundingClientRect();
+        let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+        if (x + t.offsetWidth > r.width) x = Math.max(0, ev.clientX - r.left - t.offsetWidth - 12);
+        t.style.left = x + 'px'; t.style.top = y + 'px';
+      },
+      hide() { t.hidden = true; }
+    };
+  };
+
+  window.swMeasure = function (svg, strings) {
+    const t = svg.append('text').attr('class', 'strong').style('font-size', '12px');
+    let w = 0;
+    strings.forEach((s) => { t.text(s); w = Math.max(w, t.node().getComputedTextLength() || s.length * 6.5); });
+    t.remove();
+    return w;
+  };
+
+  window.swPlaceholder = function (el, st) {
+    el.replaceChildren();
+    const p = document.createElement('p');
+    p.className = 'sub';
+    p.textContent = st === 'error' ? 'Failed to load' : (st === 'loading' ? 'Loading…' : '—');
+    el.appendChild(p);
+  };
+})();
+</script>
+
+<script>
+dash.loader('overall', {
+  description: 'Flattens monthly AI adoption records into one row per month, as a percentage.',
+  fn: ({answer}) => {
+    const recs = (answer && answer.data) || [];
+    return recs.map((r) => ({ month: r.month, share: r.ai_adoption_share * 100 })).sort((a, b) => a.month.localeCompare(b.month));
+  }
+});
+
+dash.loader('sector', {
+  description: 'Flattens monthly sector records into one row per month and sector, as a percentage.',
+  fn: ({answer}) => {
+    const out = [];
+    ((answer && answer.data) || []).forEach((r) => (r.sectors || []).forEach((s) => out.push({ month: r.month, sector: s.sector, share: s.ai_adoption_share * 100 })));
+    return out.sort((a, b) => a.month.localeCompare(b.month));
+  }
+});
+
+dash.loader('size', {
+  description: 'Flattens monthly company-size records into one row per month and size, as a percentage.',
+  fn: ({answer}) => {
+    const out = [];
+    ((answer && answer.data) || []).forEach((r) => (r.sizes || []).forEach((s) => out.push({ month: r.month, size: s.size, share: s.ai_adoption_share * 100 })));
+    return out.sort((a, b) => a.month.localeCompare(b.month));
+  }
+});
+
+dash.loader('categories', {
+  description: 'Reads the category list, then fetches the adoption summary for 16 chosen categories and tags each as AI tools or established software.',
+  fn: async ({answer, call}) => {
+    const ai = ['Foundational LLMs', 'Coding Agents', 'AI Meeting Notetakers', 'AI Dictation', 'Image & Video AI', 'Search & Research AI', 'AI Support Bots'];
+    const est = ['Email Marketing', 'Communication', 'Project Management', 'Web Hosting & Site Builders', 'CRM', 'Content Creation', 'Software Design', 'Password Managers', 'Observability'];
+    const valid = new Set(((answer && answer.categories) || []).map((c) => c.software_category));
+    const wanted = [...ai, ...est].filter((c) => valid.size === 0 || valid.has(c));
+    const res = await Promise.all(wanted.map((c) => call('ramp_rate_get_category_summary', { category: c, rationale: 'Category adoption stats for a public dashboard on AI vs established software.' })));
+    return res.map((r, i) => ({
+      category: wanted[i],
+      group: ai.includes(wanted[i]) ? 'AI tools' : 'Established software',
+      adoption: r.category_adoption_rate * 100,
+      yoy_pts: r.category_adoption_rate_yoy_change * 100,
+      vendor_count: r.vendor_count
+    }));
+  }
+});
+
+dash.loader('vendors', {
+  description: 'Fetches the vendor leaderboard for four categories and returns one row per vendor, as percentages.',
+  fn: async ({answer, call}) => {
+    const names = { 'anthropic': 'Anthropic', 'openai': 'OpenAI', 'xai': 'xAI', 'mistral-ai': 'Mistral AI', 'cohere': 'Cohere', 'claude-code': 'Claude Code', 'openai-codex': 'OpenAI Codex', 'cursor': 'Cursor', 'coderabbit': 'CodeRabbit', 'windsurf': 'Windsurf', 'magic-patterns': 'Magic Patterns', 'atlassian': 'Atlassian', 'notion': 'Notion', 'asana': 'Asana', 'monday-com': 'monday.com', 'airtable': 'Airtable', 'linear': 'Linear', 'zoom': 'Zoom', 'slack': 'Slack', 'microsoft-teams': 'Microsoft Teams', 'discord': 'Discord' };
+    const extra = ['Coding Agents', 'Project Management', 'Communication'];
+    const more = await Promise.all(extra.map((c) => call('ramp_rate_get_category_vendors', { category: c, limit: 6, rationale: 'Vendor leaderboard for a public dashboard.' })));
+    const all = [answer, ...more];
+    const out = [];
+    all.forEach((a) => ((a && a.vendors) || []).forEach((v) => out.push({
+      category: a.software_category || v.software_category,
+      vendor: names[v.vendor_slug] || v.vendor_slug,
+      adoption: v.adoption_rate * 100,
+      yoy_pts: v.adoption_rate_yoy_change * 100,
+      spend_share: v.share_of_category_spend * 100
+    })));
+    return out;
+  }
+});
+
+dash.calc('kpi', {
+  title: 'Latest AI adoption and 12-month change',
+  description: 'Latest month\'s share of businesses paying for AI, and the change from 12 months earlier.',
+  inputs: ['overall'],
+  fn: (overall) => {
+    if (!overall || overall.length < 13) return [];
+    const last = overall[overall.length - 1], prior = overall[overall.length - 13];
+    return [{ latest_month: last.month, latest_share: last.share, prior_month: prior.month, prior_share: prior.share, change_12m: last.share - prior.share }];
+  }
+});
+
+dash.calc('split', {
+  title: 'Growing vs shrinking categories by group',
+  description: 'For AI tools and established software: how many categories grew or shrank over the past year, and the average change.',
+  inputs: ['categories'],
+  fn: (categories) => ['AI tools', 'Established software'].map((g) => {
+    const rows = categories.filter((r) => r.group === g);
+    return {
+      group: g,
+      total: rows.length,
+      growing: rows.filter((r) => r.yoy_pts > 0).length,
+      shrinking: rows.filter((r) => r.yoy_pts < 0).length,
+      avg_yoy: rows.length ? rows.reduce((s, r) => s + r.yoy_pts, 0) / rows.length : null
+    };
+  })
+});
+
+dash.calc('sector_change', {
+  title: 'AI adoption by sector, 12 months apart',
+  description: 'Each sector\'s share of businesses paying for AI in the latest month and 12 months earlier.',
+  inputs: ['sector'],
+  fn: (sector) => {
+    const months = [...new Set(sector.map((r) => r.month))].sort();
+    if (months.length < 13) return [];
+    const end = months[months.length - 1], start = months[months.length - 13];
+    const sectors = [...new Set(sector.map((r) => r.sector))];
+    return sectors.map((s) => {
+      const a = sector.find((r) => r.sector === s && r.month === start);
+      const b = sector.find((r) => r.sector === s && r.month === end);
+      return { sector: s, start_month: start, end_month: end, start: a ? a.share : null, end: b ? b.share : null, change: a && b ? b.share - a.share : null };
+    }).sort((x, y) => y.end - x.end);
+  }
+});
+</script>
+
+<script>
+(function () {
+  const { pct, pts, mfmt } = window.swFmt;
+  const val = (id, field, pick) => {
+    const d = dash.data(id);
+    if (d.status !== 'ok' || !Array.isArray(d.data)) return null;
+    const row = pick ? d.data.find(pick) : d.data[0];
+    return row ? row[field] : null;
+  };
+  const setText = (el, s) => { el.textContent = s; };
+
+  dash.draw('kpi-share', (el) => setText(el, pct(val('kpi', 'latest_share'))));
+  dash.draw('kpi-change', (el) => {
+    const c = val('kpi', 'change_12m'), m = val('kpi', 'prior_month');
+    el.className = 'chg ' + (c == null ? '' : c >= 0 ? 'good' : 'bad');
+    setText(el, c == null ? '—' : `${pts(c)} vs ${mfmt(m)}`);
+  });
+  const g = (name) => (r) => r.group === name;
+  dash.draw('ai-grow', (el) => setText(el, val('split', 'growing', g('AI tools')) ?? '—'));
+  dash.draw('ai-total', (el) => setText(el, val('split', 'total', g('AI tools')) ?? '—'));
+  dash.draw('est-shrink', (el) => setText(el, val('split', 'shrinking', g('Established software')) ?? '—'));
+  dash.draw('est-total', (el) => setText(el, val('split', 'total', g('Established software')) ?? '—'));
+  dash.draw('avg-ai', (el) => { const v = val('split', 'avg_yoy', g('AI tools')); el.className = 'big ' + (v == null ? '' : v >= 0 ? 'good' : 'bad'); setText(el, pts(v)); });
+  dash.draw('avg-est', (el) => { const v = val('split', 'avg_yoy', g('Established software')); el.className = 'big ' + (v == null ? '' : v >= 0 ? 'good' : 'bad'); setText(el, pts(v)); });
+
+  // Category change bars
+  dash.draw('cat-chart', (el) => {
+    const d = dash.data('categories');
+    if (d.status !== 'ok') return window.swPlaceholder(el, d.status);
+    const rows = d.data.slice().sort((a, b) => b.yoy_pts - a.yoy_pts);
+    el.replaceChildren();
+    const W = el.clientWidth || 600, bh = 22, top = 8;
+    const H = top + rows.length * bh + 24;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Past-year change in adoption by software category');
+    const labW = window.swMeasure(svg, rows.map((r) => r.category)) + 10;
+    const valW = window.swMeasure(svg, rows.map((r) => pts(r.yoy_pts))) + 8;
+    const ext = d3.extent([0, ...rows.map((r) => r.yoy_pts)]);
+    const x = d3.scaleLinear().domain(ext).range([labW + valW, W - valW]).nice();
+    const y = (i) => top + i * bh;
+    const tip = window.swTip(el);
+    svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', top - 4).attr('y2', H - 20).style('stroke', 'var(--cds-chart-axis)');
+    const gr = svg.append('g').selectAll('g').data(rows).join('g');
+    gr.append('text').attr('class', 'strong').attr('x', labW - 10).attr('y', (r, i) => y(i) + bh / 2 + 4).attr('text-anchor', 'end').text((r) => r.category);
+    gr.append('rect')
+      .attr('x', (r) => Math.min(x(0), x(r.yoy_pts))).attr('y', (r, i) => y(i) + 4)
+      .attr('width', (r) => Math.max(1, Math.abs(x(r.yoy_pts) - x(0)))).attr('height', bh - 8).attr('rx', 2)
+      .style('fill', (r) => r.group === 'AI tools' ? 'var(--cds-chart-categorical-1, ' + dash.colors[0] + ')' : 'var(--cds-chart-muted)')
+      .attr('data-source', 'categories').attr('data-field', 'yoy_pts').attr('data-where', (r) => 'category=' + encodeURIComponent(r.category))
+      .on('mousemove', (ev, r) => tip.show(ev, [r.category, `${r.group}`, `Now ${pct(r.adoption)} of businesses`, `Past year: ${pts(r.yoy_pts)}`]))
+      .on('mouseleave', () => tip.hide());
+    gr.append('text').attr('x', (r) => r.yoy_pts >= 0 ? x(r.yoy_pts) + 4 : x(r.yoy_pts) - 4).attr('text-anchor', (r) => r.yoy_pts >= 0 ? 'start' : 'end')
+      .attr('y', (r, i) => y(i) + bh / 2 + 4).text((r) => pts(r.yoy_pts));
+    svg.append('text').attr('x', x(0)).attr('y', H - 4).attr('text-anchor', 'middle').text('0');
+  });
+
+  // Sector dumbbell
+  dash.draw('sector-chart', (el) => {
+    const d = dash.data('sector_change');
+    if (d.status !== 'ok' || !d.data || !d.data.length) return window.swPlaceholder(el, d.status);
+    const rows = d.data;
+    el.replaceChildren();
+    const W = el.clientWidth || 600, bh = 30, top = 22;
+    const H = top + rows.length * bh + 20;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'AI adoption by sector, 12 months ago and latest month');
+    const labW = window.swMeasure(svg, rows.map((r) => r.sector)) + 12;
+    const endW = window.swMeasure(svg, rows.map((r) => `${pct(r.end, 0)} (${pts(r.change)})`)) + 12;
+    const x = d3.scaleLinear().domain([0, 100]).range([labW, W - endW]);
+    const tip = window.swTip(el);
+    [0, 25, 50, 75, 100].forEach((t) => {
+      svg.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', top - 6).attr('y2', H - 16).style('stroke', 'var(--cds-chart-grid)');
+      svg.append('text').attr('x', x(t)).attr('y', top - 10).attr('text-anchor', 'middle').text(t + '%');
+    });
+    const gr = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (r, i) => `translate(0,${top + i * bh + bh / 2})`);
+    gr.append('text').attr('class', 'strong').attr('x', labW - 12).attr('y', 4).attr('text-anchor', 'end').text((r) => r.sector);
+    gr.append('line').attr('x1', (r) => x(r.start)).attr('x2', (r) => x(r.end)).style('stroke', 'var(--cds-chart-muted)').style('stroke-width', 3);
+    gr.append('circle').attr('cx', (r) => x(r.start)).attr('r', 5).style('fill', 'var(--cds-chart-muted)')
+      .attr('data-source', 'sector_change').attr('data-field', 'start').attr('data-where', (r) => 'sector=' + encodeURIComponent(r.sector));
+    gr.append('circle').attr('cx', (r) => x(r.end)).attr('r', 6).style('fill', 'var(--cds-chart-categorical-1, ' + dash.colors[0] + ')')
+      .attr('data-source', 'sector_change').attr('data-field', 'end').attr('data-where', (r) => 'sector=' + encodeURIComponent(r.sector));
+    gr.append('text').attr('class', 'strong').attr('x', (r) => x(r.end) + 10).attr('y', 4).text((r) => `${pct(r.end, 0)} (${pts(r.change)})`);
+    gr.append('rect').attr('x', labW).attr('y', -bh / 2).attr('width', W - labW).attr('height', bh).style('fill', 'transparent')
+      .on('mousemove', (ev, r) => tip.show(ev, [r.sector, `${mfmt(r.start_month)}: ${pct(r.start)}`, `${mfmt(r.end_month)}: ${pct(r.end)}`, `Change: ${pts(r.change)}`]))
+      .on('mouseleave', () => tip.hide());
+  });
+
+  // Size lines
+  dash.draw('size-chart', (el) => {
+    const d = dash.data('size');
+    if (d.status !== 'ok' || !d.data.length) return window.swPlaceholder(el, d.status);
+    const rows = d.data;
+    el.replaceChildren();
+    const W = el.clientWidth || 600, H = 280, top = 14, bottom = 30;
+    const sizes = [...new Set(rows.map((r) => r.size))];
+    const months = [...new Set(rows.map((r) => r.month))].sort();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'AI adoption by company size over time');
+    const lasts = sizes.map((s) => rows.filter((r) => r.size === s).slice(-1)[0]);
+    const endW = window.swMeasure(svg, lasts.map((r) => `${r.size.replace(' businesses', '')} ${pct(r.share)}`)) + 12;
+    const x = d3.scalePoint().domain(months).range([40, W - endW]);
+    const y = d3.scaleLinear().domain([0, Math.max(80, d3.max(rows, (r) => r.share))]).range([H - bottom, top]).nice();
+    const tip = window.swTip(el);
+    y.ticks(4).forEach((t) => {
+      svg.append('line').attr('x1', 40).attr('x2', W - endW).attr('y1', y(t)).attr('y2', y(t)).style('stroke', 'var(--cds-chart-grid)');
+      svg.append('text').attr('x', 34).attr('y', y(t) + 4).attr('text-anchor', 'end').text(t + '%');
+    });
+    const step = Math.max(1, Math.ceil(months.length / Math.max(2, Math.floor((W - endW - 40) / 70))));
+    months.forEach((m, i) => { if (i % step === 0 || i === months.length - 1) svg.append('text').attr('x', x(m)).attr('y', H - 8).attr('text-anchor', 'middle').text(d3.utcFormat('%b %y')(new Date(m + '-01T00:00:00Z'))); });
+    const col = (i) => i === sizes.length - 1 ? 'var(--cds-chart-categorical-1, ' + dash.colors[0] + ')' : 'var(--cds-chart-muted)';
+    const op = (i) => i === 0 ? 0.55 : 1;
+    const ends = lasts.map((r, i) => ({ r, i, y: y(r.share) })).sort((a, b) => a.y - b.y);
+    for (let k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < 14) ends[k].y = ends[k - 1].y + 14;
+    sizes.forEach((s, i) => {
+      const pts_ = rows.filter((r) => r.size === s);
+      svg.append('path').attr('d', d3.line().x((r) => x(r.month)).y((r) => y(r.share))(pts_)).style('fill', 'none').style('stroke', col(i)).style('stroke-width', 2.5).style('stroke-opacity', op(i));
+      svg.append('g').selectAll('circle').data(pts_).join('circle').attr('cx', (r) => x(r.month)).attr('cy', (r) => y(r.share)).attr('r', 7).style('fill', 'transparent')
+        .on('mousemove', (ev, r) => tip.show(ev, [r.size, `${mfmt(r.month)}: ${pct(r.share)}`])).on('mouseleave', () => tip.hide());
+    });
+    ends.forEach(({ r, i, y: ly }) => {
+      svg.append('circle').attr('cx', x(r.month)).attr('cy', y(r.share)).attr('r', 3.5).style('fill', col(i)).style('fill-opacity', op(i));
+      svg.append('text').attr('class', 'strong').attr('x', x(r.month) + 8).attr('y', ly + 4)
+        .attr('data-source', 'size').attr('data-field', 'share').attr('data-where', 'month=' + r.month + '&size=' + encodeURIComponent(r.size))
+        .text(`${r.size.replace(' businesses', '')} ${pct(r.share)}`);
+    });
+  });
+
+  // Vendor picker + bars
+  window.swVendorCat = window.swVendorCat || 'Foundational LLMs';
+  dash.draw('vendor-cat', (sel) => {
+    const d = dash.data('vendors');
+    const cats = d.status === 'ok' ? [...new Set(d.data.map((r) => r.category))] : [];
+    sel.replaceChildren(...cats.map((c) => new Option(c, c)));
+    if (cats.length && !cats.includes(window.swVendorCat)) window.swVendorCat = cats[0];
+    sel.value = window.swVendorCat;
+    sel.onchange = () => { window.swVendorCat = sel.value; dash.draw('vendor-chart'); };
+  });
+
+  dash.draw('vendor-chart', (el) => {
+    const d = dash.data('vendors');
+    if (d.status !== 'ok') return window.swPlaceholder(el, d.status);
+    const rows = d.data.filter((r) => r.category === window.swVendorCat).sort((a, b) => b.adoption - a.adoption);
+    el.replaceChildren();
+    const W = el.clientWidth || 600, bh = 30, top = 4;
+    const H = top + rows.length * bh + 8;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', `Vendor adoption in ${window.swVendorCat}`);
+    const labW = window.swMeasure(svg, rows.map((r) => r.vendor)) + 12;
+    const endW = window.swMeasure(svg, rows.map((r) => `${pct(r.adoption, 0)}  ${pts(r.yoy_pts)} yr`)) + 12;
+    const x = d3.scaleLinear().domain([0, 100]).range([labW, W - endW]);
+    const tip = window.swTip(el);
+    const gr = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (r, i) => `translate(0,${top + i * bh})`);
+    gr.append('text').attr('class', 'strong').attr('x', labW - 12).attr('y', bh / 2 + 4).attr('text-anchor', 'end').text((r) => r.vendor);
+    gr.append('rect').attr('x', labW).attr('y', 5).attr('height', bh - 10).attr('rx', 2).attr('width', (r) => Math.max(1, x(r.adoption) - labW))
+      .style('fill', (r, i) => i === 0 ? 'var(--cds-chart-categorical-1, ' + dash.colors[0] + ')' : 'var(--cds-chart-muted)')
+      .attr('data-source', 'vendors').attr('data-field', 'adoption').attr('data-where', (r) => 'category=' + encodeURIComponent(r.category) + '&vendor=' + encodeURIComponent(r.vendor))
+      .on('mousemove', (ev, r) => tip.show(ev, [r.vendor, `Used by ${pct(r.adoption)} of ${r.category} buyers`, `Past year: ${pts(r.yoy_pts)}`, `Share of category spend: ${pct(r.spend_share)}`]))
+      .on('mouseleave', () => tip.hide());
+    const lab = gr.append('text').attr('x', (r) => x(r.adoption) + 6).attr('y', bh / 2 + 4);
+    lab.append('tspan').attr('class', 'strong').style('fill', 'var(--color-fg)').text((r) => pct(r.adoption, 0));
+    lab.append('tspan').attr('dx', 8).style('fill', (r) => r.yoy_pts >= 0 ? 'var(--color-ok)' : 'var(--color-bad)').text((r) => `${pts(r.yoy_pts)} yr`);
+  });
+})();
+</script>
