@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is AI Eating the Software Budget? | Pooja Shah</title>
+<meta name="description" content="Interactive dashboard on Ramp spending data from 50,000+ US businesses: AI tools are gaining customers while established software is losing them.">
+<meta property="og:title" content="Is AI Eating the Software Budget?">
+<meta property="og:description" content="5 of 7 AI tool categories gained business customers in the past year, while 8 of 9 established software categories lost them. Interactive dashboard by Pooja Shah.">
+<meta property="og:image" content="dashboard_top.jpg">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<style>
+:root {
+  --bg: #fafaf7; --panel: #ffffff; --fg: #1d1d1b; --muted: #6b6b66; --line: #e4e2dc;
+  --grid: #ecebe6; --axis: #b9b7b0; --accent: #2a6fdb; --neutral: #bdbbb4;
+  --good: #23824c; --bad: #b8322a; --tip: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1b19; --panel: #242422; --fg: #f1f0eb; --muted: #a3a29c; --line: #3a3936;
+    --grid: #2f2e2b; --axis: #55534e; --accent: #5b93ef; --neutral: #6c6a64;
+    --good: #5cc28a; --bad: #ef7b72; --tip: #2b2b29;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 48px; display: flex; flex-direction: column; gap: 36px; }
+h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: clamp(28px, 4vw, 40px); margin: 0 0 8px; }
+h2 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+.lede { font-size: 17px; max-width: 46rem; margin: 0; }
+.sub { color: var(--muted); font-size: 13px; margin: 0 0 10px; max-width: 46rem; }
+.byline { color: var(--muted); font-size: 13px; margin-top: 10px; }
+.byline a, footer a { color: var(--accent); text-decoration: none; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.tile .lab { color: var(--muted); font-size: 13px; }
+.tile .big { font-family: Georgia, serif; font-size: 38px; margin: 6px 0; font-variant-numeric: tabular-nums; }
+.tile .chg { font-size: 13px; }
+.good { color: var(--good); } .bad { color: var(--bad); }
+.chart { position: relative; }
+.chart svg text { font-size: 12px; fill: var(--muted); }
+.chart svg text.strong { fill: var(--fg); }
+.tip { position: absolute; pointer-events: none; background: var(--tip); border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(0,0,0,.12); border-radius: 8px; padding: 6px 9px; font-size: 12px; white-space: nowrap; z-index: 5; }
+.tip div:first-child { font-weight: 600; }
+.legend { display: flex; gap: 16px; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+select { font: inherit; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); margin-bottom: 10px; }
+details { color: var(--muted); font-size: 13px; }
+footer { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Is AI eating the software budget?</h1>
+    <p class="lede" id="lede"></p>
+    <div class="byline">Ramp spending data on 50,000+ US businesses (snapshot: October 2026) · Built by <a href="https://www.linkedin.com/in/drpoojashah">Pooja Shah</a> · <a href="https://github.com/DrPoojaShah/ramp-software-spending-dashboard">Code on GitHub</a></div>
+  </header>
+
+  <section class="tiles">
+    <div class="tile"><div class="lab">Businesses paying for any AI tool, Oct 2026</div><div class="big" id="k1"></div><div class="chg" id="k1c"></div></div>
+    <div class="tile"><div class="lab">Average change in AI tool categories, past year</div><div class="big" id="k2"></div><div class="chg">percentage points of businesses</div></div>
+    <div class="tile"><div class="lab">Average change in established software categories, past year</div><div class="big" id="k3"></div><div class="chg">percentage points of businesses</div></div>
+  </section>
+
+  <section>
+    <h2>AI categories are growing; most established ones are shrinking</h2>
+    <p class="sub">Change over the past year in the share of businesses paying for each software category (percentage points). Hover a bar for its current share.</p>
+    <div class="legend"><span><i style="background:var(--accent)"></i>AI tools</span><span><i style="background:var(--neutral)"></i>Established software</span></div>
+    <div class="chart" id="cat"></div>
+  </section>
+
+  <section>
+    <h2>Every sector added AI, and Technology, the leader, gained the least</h2>
+    <p class="sub">Share of businesses paying for AI, October 2025 (grey) vs October 2026 (blue).</p>
+    <div class="chart" id="sec"></div>
+  </section>
+
+  <section>
+    <h2>Larger businesses still lead, but all sizes are climbing</h2>
+    <p class="sub">Share of businesses paying for AI by company size, last 24 months.</p>
+    <div class="chart" id="size"></div>
+  </section>
+
+  <section>
+    <h2>Who wins inside each category</h2>
+    <p class="sub">Share of the category's paying businesses that use each vendor, with the past year's change. Pick a category.</p>
+    <select id="vcat" aria-label="Software category"></select>
+    <div class="chart" id="vend"></div>
+  </section>
+
+  <details>
+    <summary>How to read these numbers</summary>
+    <ul>
+      <li>All figures come from Ramp Data: corporate card and bill-pay spending by US businesses on Ramp. Free tiers and tools paid for another way are not counted.</li>
+      <li>"AI tool" adoption (tiles, sectors, sizes) comes from Ramp's AI Index. Category figures come from Ramp Rate, which measures each category separately, so the two are not directly comparable.</li>
+      <li>Vendor shares overlap: one business can pay several vendors in the same category.</li>
+      <li>Which categories count as "AI tools" is this dashboard's own grouping.</li>
+    </ul>
+  </details>
+
+  <footer>Built by Pooja Shah, Data Scientist · M.S. Data Analytics Engineering, George Mason University · <a href="https://www.linkedin.com/in/drpoojashah">LinkedIn</a> · <a href="https://github.com/DrPoojaShah">GitHub</a></footer>
+</div>
+
+<script>
+const DATA = {"overall": {"start_month": "2025-10", "start": 43.54, "end_month": "2026-10", "end": 56.8}, "sectors": [{"sector": "Technology", "start": 71.31, "end": 80.11}, {"sector": "Finance", "start": 58.46, "end": 74.26}, {"sector": "Manufacturing", "start": 43.21, "end": 62.82}, {"sector": "Retail", "start": 34.8, "end": 49.86}, {"sector": "Health Care", "start": 29.65, "end": 43.7}, {"sector": "Construction", "start": 29.19, "end": 45.01}, {"sector": "Accommodation and Food Services", "start": 23.46, "end": 34.96}], "size": [{"month": "2024-11", "size": "Small", "share": 31.93}, {"month": "2024-11", "size": "Medium", "share": 33.96}, {"month": "2024-11", "size": "Large", "share": 39.93}, {"month": "2024-12", "size": "Small", "share": 32.09}, {"month": "2024-12", "size": "Medium", "share": 34.46}, {"month": "2024-12", "size": "Large", "share": 40.45}, {"month": "2025-01", "size": "Small", "share": 32.73}, {"month": "2025-01", "size": "Medium", "share": 36.04}, {"month": "2025-01", "size": "Large", "share": 41.68}, {"month": "2025-02", "size": "Small", "share": 33.92}, {"month": "2025-02", "size": "Medium", "share": 37.25}, {"month": "2025-02", "size": "Large", "share": 42.55}, {"month": "2025-03", "size": "Small", "share": 34.41}, {"month": "2025-03", "size": "Medium", "share": 38.71}, {"month": "2025-03", "size": "Large", "share": 43.21}, {"month": "2025-04", "size": "Small", "share": 35.25}, {"month": "2025-04", "size": "Medium", "share": 40.88}, {"month": "2025-04", "size": "Large", "share": 45.2}, {"month": "2025-05", "size": "Small", "share": 36.22}, {"month": "2025-05", "size": "Medium", "share": 42.4}, {"month": "2025-05", "size": "Large", "share": 46.92}, {"month": "2025-06", "size": "Small", "share": 36.95}, {"month": "2025-06", "size": "Medium", "share": 43.75}, {"month": "2025-06", "size": "Large", "share": 47.7}, {"month": "2025-07", "size": "Small", "share": 37.98}, {"month": "2025-07", "size": "Medium", "share": 45.4}, {"month": "2025-07", "size": "Large", "share": 49.66}, {"month": "2025-08", "size": "Small", "share": 38.63}, {"month": "2025-08", "size": "Medium", "share": 46.87}, {"month": "2025-08", "size": "Large", "share": 50.72}, {"month": "2025-09", "size": "Small", "share": 38.46}, {"month": "2025-09", "size": "Medium", "share": 47.63}, {"month": "2025-09", "size": "Large", "share": 51.66}, {"month": "2025-10", "size": "Small", "share": 38.25}, {"month": "2025-10", "size": "Medium", "share": 47.37}, {"month": "2025-10", "size": "Large", "share": 51.84}, {"month": "2025-11", "size": "Small", "share": 39.05}, {"month": "2025-11", "size": "Medium", "share": 48.15}, {"month": "2025-11", "size": "Large", "share": 52.75}, {"month": "2025-12", "size": "Small", "share": 39.08}, {"month": "2025-12", "size": "Medium", "share": 48.15}, {"month": "2025-12", "size": "Large", "share": 53.3}, {"month": "2026-01", "size": "Small", "share": 40.01}, {"month": "2026-01", "size": "Medium", "share": 49.44}, {"month": "2026-01", "size": "Large", "share": 54.44}, {"month": "2026-02", "size": "Small", "share": 42.28}, {"month": "2026-02", "size": "Medium", "share": 51.87}, {"month": "2026-02", "size": "Large", "share": 56.51}, {"month": "2026-03", "size": "Small", "share": 44.27}, {"month": "2026-03", "size": "Medium", "share": 55.18}, {"month": "2026-03", "size": "Large", "share": 59.61}, {"month": "2026-04", "size": "Small", "share": 46.02}, {"month": "2026-04", "size": "Medium", "share": 57.27}, {"month": "2026-04", "size": "Large", "share": 62.2}, {"month": "2026-05", "size": "Small", "share": 47.28}, {"month": "2026-05", "size": "Medium", "share": 59.1}, {"month": "2026-05", "size": "Large", "share": 62.92}, {"month": "2026-06", "size": "Small", "share": 47.98}, {"month": "2026-06", "size": "Medium", "share": 60.13}, {"month": "2026-06", "size": "Large", "share": 63.59}, {"month": "2026-07", "size": "Small", "share": 48.9}, {"month": "2026-07", "size": "Medium", "share": 60.92}, {"month": "2026-07", "size": "Large", "share": 64.89}, {"month": "2026-08", "size": "Small", "share": 49.44}, {"month": "2026-08", "size": "Medium", "share": 61.35}, {"month": "2026-08", "size": "Large", "share": 65.1}, {"month": "2026-09", "size": "Small", "share": 50.02}, {"month": "2026-09", "size": "Medium", "share": 62.46}, {"month": "2026-09", "size": "Large", "share": 65.64}, {"month": "2026-10", "size": "Small", "share": 51.23}, {"month": "2026-10", "size": "Medium", "share": 63.21}, {"month": "2026-10", "size": "Large", "share": 66.71}], "categories": [{"category": "Foundational LLMs", "group": "AI tools", "adoption": 62.38, "yoy": 14.9}, {"category": "Coding Agents", "group": "AI tools", "adoption": 29.18, "yoy": 12.45}, {"category": "AI Meeting Notetakers", "group": "AI tools", "adoption": 10.4, "yoy": 5.29}, {"category": "AI Dictation", "group": "AI tools", "adoption": 5.12, "yoy": 3.66}, {"category": "Image & Video AI", "group": "AI tools", "adoption": 7.42, "yoy": 1.51}, {"category": "Search & Research AI", "group": "AI tools", "adoption": 4.09, "yoy": -0.49}, {"category": "AI Support Bots", "group": "AI tools", "adoption": 0.86, "yoy": -0.56}, {"category": "Email Marketing", "group": "Established software", "adoption": 50.54, "yoy": -3.6}, {"category": "Communication", "group": "Established software", "adoption": 32.97, "yoy": -3.42}, {"category": "Project Management", "group": "Established software", "adoption": 28.15, "yoy": -3.59}, {"category": "Web Hosting & Site Builders", "group": "Established software", "adoption": 27.53, "yoy": 0.04}, {"category": "CRM", "group": "Established software", "adoption": 24.92, "yoy": -2.03}, {"category": "Content Creation", "group": "Established software", "adoption": 24.06, "yoy": -0.47}, {"category": "Software Design", "group": "Established software", "adoption": 11.69, "yoy": -2.25}, {"category": "Password Managers", "group": "Established software", "adoption": 9.4, "yoy": -0.62}, {"category": "Observability", "group": "Established software", "adoption": 8.76, "yoy": -2.21}], "vendors": [{"category": "Foundational LLMs", "vendor": "Anthropic", "adoption": 80.5, "yoy": 39.4, "spend": 55.7}, {"category": "Foundational LLMs", "vendor": "OpenAI", "adoption": 77.4, "yoy": -17.6, "spend": 41.0}, {"category": "Foundational LLMs", "vendor": "xAI", "adoption": 13.0, "yoy": 5.2, "spend": 0.8}, {"category": "Foundational LLMs", "vendor": "Mistral AI", "adoption": 0.4, "yoy": 0.1, "spend": 2.6}, {"category": "Foundational LLMs", "vendor": "Cohere", "adoption": 0.3, "yoy": -0.1, "spend": 0.1}, {"category": "Coding Agents", "vendor": "Claude Code", "adoption": 87.3, "yoy": 51.3, "spend": 37.1}, {"category": "Coding Agents", "vendor": "OpenAI Codex", "adoption": 42.5, "yoy": -2.6, "spend": 57.8}, {"category": "Coding Agents", "vendor": "Cursor", "adoption": 33.6, "yoy": -34.2, "spend": 4.7}, {"category": "Coding Agents", "vendor": "CodeRabbit", "adoption": 5.0, "yoy": -0.9, "spend": 0.2}, {"category": "Coding Agents", "vendor": "Windsurf", "adoption": 3.0, "yoy": -9.1, "spend": 0.1}, {"category": "Coding Agents", "vendor": "Magic Patterns", "adoption": 0.5, "yoy": -0.7, "spend": 0.0}, {"category": "Project Management", "vendor": "Atlassian", "adoption": 46.6, "yoy": -6.0, "spend": 44.1}, {"category": "Project Management", "vendor": "Notion", "adoption": 31.9, "yoy": 0.7, "spend": 15.3}, {"category": "Project Management", "vendor": "Asana", "adoption": 21.5, "yoy": 0.5, "spend": 10.0}, {"category": "Project Management", "vendor": "monday.com", "adoption": 18.7, "yoy": -0.1, "spend": 10.1}, {"category": "Project Management", "vendor": "Airtable", "adoption": 15.6, "yoy": -0.1, "spend": 5.2}, {"category": "Project Management", "vendor": "Linear", "adoption": 15.3, "yoy": 3.5, "spend": 7.1}, {"category": "Communication", "vendor": "Zoom", "adoption": 70.6, "yoy": -3.1, "spend": 20.5}, {"category": "Communication", "vendor": "Slack", "adoption": 55.8, "yoy": 0.0, "spend": 77.6}, {"category": "Communication", "vendor": "Microsoft Teams", "adoption": 11.5, "yoy": 1.0, "spend": 1.5}, {"category": "Communication", "vendor": "Discord", "adoption": 2.8, "yoy": -0.4, "spend": 0.3}]};
+const pct = (v, d = 1) => `${(+v).toFixed(d)}%`;
+const pts = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)} pts`;
+const mfmt = (m) => d3.utcFormat('%b %Y')(new Date(m + '-01T00:00:00Z'));
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function tip(box) {
+  let t = box.querySelector('.tip');
+  if (!t) { t = document.createElement('div'); t.className = 'tip'; t.hidden = true; box.appendChild(t); }
+  return {
+    show(ev, lines) {
+      t.replaceChildren(...lines.map((s) => { const d = document.createElement('div'); d.textContent = s; return d; }));
+      t.hidden = false;
+      const r = box.getBoundingClientRect();
+      let x = ev.clientX - r.left + 12;
+      if (x + t.offsetWidth > r.width) x = Math.max(0, ev.clientX - r.left - t.offsetWidth - 12);
+      t.style.left = x + 'px'; t.style.top = (ev.clientY - r.top + 12) + 'px';
+    },
+    hide() { t.hidden = true; }
+  };
+}
+function measure(svg, strings) {
+  const t = svg.append('text').attr('class', 'strong');
+  let w = 0; strings.forEach((s) => { t.text(s); w = Math.max(w, t.node().getComputedTextLength() || s.length * 6.5); });
+  t.remove(); return w;
+}
+const avg = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+
+function drawText() {
+  const ai = DATA.categories.filter((c) => c.group === 'AI tools');
+  const est = DATA.categories.filter((c) => c.group !== 'AI tools');
+  const lede = document.getElementById('lede');
+  lede.replaceChildren();
+  const b = (s) => { const e = document.createElement('b'); e.textContent = s; return e; };
+  lede.append('Over the last year, ', b(ai.filter((c) => c.yoy > 0).length), ' of ', b(ai.length), ' AI tool categories gained business customers, while ', b(est.filter((c) => c.yoy < 0).length), ' of ', b(est.length), ' established software categories lost them.');
+  const o = DATA.overall, ch = o.end - o.start;
+  document.getElementById('k1').textContent = pct(o.end);
+  const k1c = document.getElementById('k1c'); k1c.textContent = `${pts(ch)} vs ${mfmt(o.start_month)}`; k1c.className = 'chg ' + (ch >= 0 ? 'good' : 'bad');
+  const a2 = avg(ai.map((c) => c.yoy)), a3 = avg(est.map((c) => c.yoy));
+  const k2 = document.getElementById('k2'); k2.textContent = pts(a2); k2.className = 'big ' + (a2 >= 0 ? 'good' : 'bad');
+  const k3 = document.getElementById('k3'); k3.textContent = pts(a3); k3.className = 'big ' + (a3 >= 0 ? 'good' : 'bad');
+}
+
+function drawCat() {
+  const el = document.getElementById('cat'); el.replaceChildren();
+  const rows = DATA.categories.slice().sort((a, b) => b.yoy - a.yoy);
+  const W = el.clientWidth || 600, bh = 24, top = 8, H = top + rows.length * bh + 24;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Past-year change in adoption by software category');
+  const labW = measure(svg, rows.map((r) => r.category)) + 10, valW = measure(svg, rows.map((r) => pts(r.yoy))) + 8;
+  const x = d3.scaleLinear().domain(d3.extent([0, ...rows.map((r) => r.yoy)])).range([labW + valW, W - valW]).nice();
+  const y = (i) => top + i * bh, tp = tip(el);
+  svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', top - 4).attr('y2', H - 20).style('stroke', css('--axis'));
+  const g = svg.append('g').selectAll('g').data(rows).join('g');
+  g.append('text').attr('class', 'strong').attr('x', labW - 10).attr('y', (r, i) => y(i) + bh / 2 + 4).attr('text-anchor', 'end').text((r) => r.category);
+  g.append('rect').attr('x', (r) => Math.min(x(0), x(r.yoy))).attr('y', (r, i) => y(i) + 4).attr('width', (r) => Math.max(1, Math.abs(x(r.yoy) - x(0)))).attr('height', bh - 8).attr('rx', 2)
+    .style('fill', (r) => r.group === 'AI tools' ? css('--accent') : css('--neutral'))
+    .on('mousemove', (ev, r) => tp.show(ev, [r.category, r.group, `Now ${pct(r.adoption)} of businesses`, `Past year: ${pts(r.yoy)}`])).on('mouseleave', () => tp.hide());
+  g.append('text').attr('x', (r) => r.yoy >= 0 ? x(r.yoy) + 4 : x(r.yoy) - 4).attr('text-anchor', (r) => r.yoy >= 0 ? 'start' : 'end').attr('y', (r, i) => y(i) + bh / 2 + 4).text((r) => pts(r.yoy));
+}
+
+function drawSec() {
+  const el = document.getElementById('sec'); el.replaceChildren();
+  const rows = DATA.sectors.slice().sort((a, b) => b.end - a.end);
+  const W = el.clientWidth || 600, narrow = W < 600, bh = narrow ? 46 : 32, top = 22, H = top + rows.length * bh + 12;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'AI adoption by sector, October 2025 and October 2026');
+  const lab = (r) => `${pct(r.end, 0)} (${pts(r.end - r.start)})`;
+  const labW = narrow ? 18 : measure(svg, rows.map((r) => r.sector)) + 12, endW = measure(svg, rows.map(lab)) + 14;
+  const x = d3.scaleLinear().domain([0, 100]).range([labW, W - endW]), tp = tip(el);
+  [0, 25, 50, 75, 100].forEach((t) => {
+    svg.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', top - 6).attr('y2', H - 8).style('stroke', css('--grid'));
+    svg.append('text').attr('x', x(t)).attr('y', top - 10).attr('text-anchor', 'middle').text(t + '%');
+  });
+  const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (r, i) => `translate(0,${top + i * bh + (narrow ? bh - 12 : bh / 2)})`);
+  if (narrow) g.append('text').attr('class', 'strong').attr('x', labW).attr('y', -12).text((r) => r.sector);
+  else g.append('text').attr('class', 'strong').attr('x', labW - 12).attr('y', 4).attr('text-anchor', 'end').text((r) => r.sector);
+  g.append('line').attr('x1', (r) => x(r.start)).attr('x2', (r) => x(r.end)).style('stroke', css('--neutral')).style('stroke-width', 3);
+  g.append('circle').attr('cx', (r) => x(r.start)).attr('r', 5).style('fill', css('--neutral'));
+  g.append('circle').attr('cx', (r) => x(r.end)).attr('r', 6).style('fill', css('--accent'));
+  g.append('text').attr('class', 'strong').attr('x', (r) => x(r.end) + 10).attr('y', 4).text(lab);
+  g.append('rect').attr('x', labW).attr('y', -bh / 2).attr('width', W - labW).attr('height', bh).style('fill', 'transparent')
+    .on('mousemove', (ev, r) => tp.show(ev, [r.sector, `Oct 2025: ${pct(r.start)}`, `Oct 2026: ${pct(r.end)}`, `Change: ${pts(r.end - r.start)}`])).on('mouseleave', () => tp.hide());
+}
+
+function drawSize() {
+  const el = document.getElementById('size'); el.replaceChildren();
+  const rows = DATA.size, sizes = ['Small', 'Medium', 'Large'], months = [...new Set(rows.map((r) => r.month))];
+  const W = el.clientWidth || 600, H = 290, top = 14, bottom = 30;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'AI adoption by company size over 24 months');
+  const lasts = sizes.map((s) => rows.filter((r) => r.size === s).at(-1));
+  const endW = measure(svg, lasts.map((r) => `${r.size} ${pct(r.share)}`)) + 14;
+  const x = d3.scalePoint().domain(months).range([40, W - endW]);
+  const y = d3.scaleLinear().domain([0, 80]).range([H - bottom, top]);
+  const tp = tip(el);
+  [0, 20, 40, 60, 80].forEach((t) => {
+    svg.append('line').attr('x1', 40).attr('x2', W - endW).attr('y1', y(t)).attr('y2', y(t)).style('stroke', css('--grid'));
+    svg.append('text').attr('x', 34).attr('y', y(t) + 4).attr('text-anchor', 'end').text(t + '%');
+  });
+  const step = Math.max(1, Math.ceil(months.length / Math.max(2, Math.floor((W - endW - 40) / 70))));
+  months.forEach((m, i) => { if (i % step === 0 || i === months.length - 1) svg.append('text').attr('x', x(m)).attr('y', H - 8).attr('text-anchor', 'middle').text(d3.utcFormat('%b %y')(new Date(m + '-01T00:00:00Z'))); });
+  const col = (s) => s === 'Large' ? css('--accent') : css('--neutral'), op = (s) => s === 'Small' ? 0.55 : 1;
+  sizes.forEach((s) => {
+    const p = rows.filter((r) => r.size === s);
+    svg.append('path').attr('d', d3.line().x((r) => x(r.month)).y((r) => y(r.share))(p)).style('fill', 'none').style('stroke', col(s)).style('stroke-width', 2.5).style('stroke-opacity', op(s));
+    svg.append('g').selectAll('circle').data(p).join('circle').attr('cx', (r) => x(r.month)).attr('cy', (r) => y(r.share)).attr('r', 7).style('fill', 'transparent')
+      .on('mousemove', (ev, r) => tp.show(ev, [`${r.size} businesses`, `${mfmt(r.month)}: ${pct(r.share)}`])).on('mouseleave', () => tp.hide());
+  });
+  const ends = lasts.map((r) => ({ r, y: y(r.share) })).sort((a, b) => a.y - b.y);
+  for (let k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < 15) ends[k].y = ends[k - 1].y + 15;
+  ends.forEach(({ r, y: ly }) => {
+    svg.append('circle').attr('cx', x(r.month)).attr('cy', y(r.share)).attr('r', 3.5).style('fill', col(r.size)).style('fill-opacity', op(r.size));
+    svg.append('text').attr('class', 'strong').attr('x', x(r.month) + 8).attr('y', ly + 4).text(`${r.size} ${pct(r.share)}`);
+  });
+}
+
+let vcat = 'Foundational LLMs';
+function drawVend() {
+  const sel = document.getElementById('vcat');
+  if (!sel.options.length) {
+    [...new Set(DATA.vendors.map((r) => r.category))].forEach((c) => sel.add(new Option(c, c)));
+    sel.value = vcat; sel.onchange = () => { vcat = sel.value; drawVend(); };
+  }
+  const el = document.getElementById('vend'); el.replaceChildren();
+  const rows = DATA.vendors.filter((r) => r.category === vcat).sort((a, b) => b.adoption - a.adoption);
+  const W = el.clientWidth || 600, bh = 32, H = rows.length * bh + 8;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', `Vendor adoption in ${vcat}`);
+  const labW = measure(svg, rows.map((r) => r.vendor)) + 12, endW = measure(svg, rows.map((r) => `${pct(r.adoption, 0)}  ${pts(r.yoy)} yr`)) + 14;
+  const x = d3.scaleLinear().domain([0, 100]).range([labW, W - endW]), tp = tip(el);
+  const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (r, i) => `translate(0,${i * bh})`);
+  g.append('text').attr('class', 'strong').attr('x', labW - 12).attr('y', bh / 2 + 4).attr('text-anchor', 'end').text((r) => r.vendor);
+  g.append('rect').attr('x', labW).attr('y', 5).attr('height', bh - 10).attr('rx', 2).attr('width', (r) => Math.max(1, x(r.adoption) - labW))
+    .style('fill', (r, i) => i === 0 ? css('--accent') : css('--neutral'))
+    .on('mousemove', (ev, r) => tp.show(ev, [r.vendor, `Used by ${pct(r.adoption)} of ${r.category} buyers`, `Past year: ${pts(r.yoy)}`, `Share of category spend: ${pct(r.spend)}`])).on('mouseleave', () => tp.hide());
+  const t = g.append('text').attr('x', (r) => x(r.adoption) + 6).attr('y', bh / 2 + 4);
+  t.append('tspan').attr('class', 'strong').text((r) => pct(r.adoption, 0));
+  t.append('tspan').attr('dx', 8).style('fill', (r) => r.yoy >= 0 ? css('--good') : css('--bad')).text((r) => `${pts(r.yoy)} yr`);
+}
+
+function drawAll() { drawText(); drawCat(); drawSec(); drawSize(); drawVend(); }
+drawAll();
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 150); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
+</script>
+</body>
+</html>
