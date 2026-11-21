@@ -4,6 +4,8 @@ An interactive dashboard on live spending data from **50,000+ US businesses**, c
 
 ![Dashboard overview](dashboard_top.jpg)
 
+🚀 **[Live demo: open the interactive dashboard](https://drpoojashah.github.io/ramp-software-spending-dashboard/)** (no login needed)
+
 🔗 **Project page:** [Handshake AI Showcase](https://app.joinhandshake.com/ai-showcase/projects/3819656)
 
 ## Key findings (snapshot, November 2026)
@@ -40,7 +42,7 @@ Every chart has hover tooltips, and every number on the page traces back to its 
 
 ## Data snapshot
 
-Because the live data needs a Ramp Data connection, this repo includes a snapshot of the numbers shown above:
+The public site (`index.html`) runs on a saved snapshot of the data, so anyone can open it. The original live version is `dashboard_index.html`. Snapshot files:
 
 | File | Contents |
 |---|---|
